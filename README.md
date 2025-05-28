@@ -1,5 +1,10 @@
-# Telegram TET Subscription Bot
+# LGAI Telegram Subscription Bot
 
+
+项目介绍
+
+    全球首款基于大数据AI行情预测机器人，目前已经稳定运行4年以上，社区数百人实战验证，胜率82%以上。采用会员订阅，目前项目已经实现盈利。和非小号，HTX，LOOPSPACE，多个KOL及社区合作，提供AI推送信号，直接间接覆盖WEB3百万用户。
+通过AVAX公链实现会员订阅测试功能。
 ## 功能
 
 - 用户通过绑定钱包地址进行订阅查询
