@@ -46,7 +46,8 @@ bash
 复制
 编辑
 python bot.py
-使用指令：
+
+用户使用指令：
 
 /bind 0xYourAddress
 
