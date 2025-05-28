@@ -9,6 +9,18 @@
 
 - 用户通过绑定钱包地址进行订阅查询
 - 查询是否已订阅 / 到期时间
+- 
+## 项目结构
+telegram-subscription-bot/
+├── bot.py                  # Telegram Bot 主程序
+├── contract/
+│   ├── SubscriptionService.sol  # 智能合约
+│   └── deploy.js               # 部署脚本
+├── abi.json               # 合约 ABI（由 Hardhat 编译得到）
+├── config.py              # 配置文件
+├── requirements.txt       # Python 依赖
+└── README.md              # 使用说明
+
 
 ## 使用步骤
 
