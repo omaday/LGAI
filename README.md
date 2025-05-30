@@ -1,11 +1,14 @@
-#项目介绍
+# 项目介绍
+
+-全球首款基于大数据AI的WEB3行情预测机器人。
+
 ![1748600835202](https://github.com/user-attachments/assets/09954f0f-60c1-4b74-8931-93c6e9a94a27)
 
 
 
 
-# 基于Avalanche 在本地部署一条 Avalanche Subnet 公链，用户测试 订阅Bot 服务。
 
+# 在本地部署一条 Avalanche Subnet 公链，基于电报BOT完成用户订阅服务。
 ---
 
 ## 📦 所需工具
