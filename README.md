@@ -1,54 +1,255 @@
-# LGAI Telegram Subscription Bot
+# 基于Avalanche 在本地部署一条 Avalanche Subnet 公链，用户测试 订阅Bot 服务。
+
+---
+
+## 📦 所需工具
+
+- Node.js（建议 v18+）
+
+- Avalanche-CLI
+
+- Docker（可选，用于子网节点隔离）
+
+---
+
+## 🧰 安装 Avalanche-CLI
+
+```bash
+curl -sSfL https://raw.githubusercontent.com/ava-labs/avalanche-cli/main/scripts/install.sh | sh -s
+export PATH=~/bin:$PATH
+```
+
+验证安装：
+
+```bash
+avalanche --version
+```
+
+---
+
+## ⚙️ 创建 Subnet 配置
+
+```bash
+avalanche subnet create mySubnet
+```
+
+按提示填写：
+
+| 选项       | 建议值               |
+| -------- | ----------------- |
+| VM 类型    | SubnetEVM         |
+| Chain ID | 12345（可自定义）       |
+| 原生代币符号   | TET               |
+| Gas 费设定  | 1.5 mil gas/s（默认） |
+| 预编译      | 否                 |
 
 
-## 项目介绍
 
-    全球首款基于大数据AI行情预测机器人，目前已经稳定运行4年以上，胜率82%以上。采用会员订阅，和非小号，HTX，LOOPSPACE，多个KOL及社区合作，提供AI推送信号，直接间接覆盖WEB3百万用户。
-测试通过AVAX子网公链实现会员订阅功能。
-## 功能
+---
 
-- 用户通过绑定钱包地址进行订阅查询
-- 查询是否已订阅 / 到期时间
+## 🚀 本地部署 Subnet
+
+```bash
+avalanche subnet deploy mySubnet --local
+```
+
+CLI 会启动多个节点，并显示 RPC 端口信息，例如：
+
+```
+Local network node endpoints:
+node2: http://127.0.0.1:9652/ext/bc/<chainID>/rpc
+node3: http://127.0.0.1:9654/ext/bc/<chainID>/rpc
+```
+
+---
+
+## 🖥️ 配置 MetaMask
+
+添加网络：
+
+- 网络名称：MySubnet Local
+
+- RPC URL：http://127.0.0.1:9652/ext/bc//rpc
+
+- Chain ID：12345
+
+- 代币符号：TET
+
+示意图：
+
+![metamask subnet](https://docs.avax.network/_images/metamask_subnet.png)
+
+---
+
+## 🔧 Subnet 配置文件结构（位于 ~/.avalanche-cli/configs/subnets/mySubnet/）
+
+```json
+{
+  "vm": "subnet-evm",
+  "name": "mySubnet",
+  "tokenName": "TET",
+  "subnetEVMGenesis": {
+    "config": {
+      "chainId": 12345,
+      "homesteadBlock": 0,
+      "eip150Block": 0,
+      "eip155Block": 0,
+      "eip158Block": 0,
+      "byzantiumBlock": 0
+    },
+    "alloc": {},
+    "nonce": "0x0",
+    "difficulty": "0x1",
+    "gasLimit": "0x7A1200"
+  }
+}
+```
+
+如需预部署账号或代币分配，可编辑 `alloc`：
+
+```json
+"alloc": {
+  "0xYourAddress": {
+    "balance": "0xDE0B6B3A7640000"
+  }
+}
+```
+
+---
+
+## 🧹 清理网络（重置）
+
+```bash
+avalanche network clean
+```
+
+---
+
+## 🧪 可选：部署合约进行测试
+
+使用 Remix IDE 或 Hardhat 连接 RPC http://127.0.0.1:9652/ext/bc/xxx/rpc 进行合约部署和测试。
+
+---
+
+## 📬 下一步：连接 Telegram Bot
+
+- 连接合约地址、用户地址与 Bot 的 chatId
+
+- 查询订阅有效期（从合约读取）
+
+- 实现订阅状态推送或定期续费提示
+
+
+
+
+
+###############################################分割线#####################################################################################################
+
+以下是在 **本地 Avalanche C-Chain 网络（Local AVAX L1）** 上为用户部署和发送 NFT VIP 卡 的 **完整详细步骤**，涵盖部署合约、mint NFT 发送给用户，以及用户接收展示。
+
+---
+
+## 🧰 工具准备
+
+- Node.js 环境
   
-## 项目结构
-telegram-subscription-bot/
-├── bot.py                  # Telegram Bot 主程序
-├── contract/
-│   ├── SubscriptionService.sol  # 智能合约
-│   └── deploy.js               # 部署脚本
-├── abi.json               # 合约 ABI（由 Hardhat 编译得到）
-├── config.py              # 配置文件
-├── requirements.txt       # Python 依赖
-└── README.md              # 使用说明
-
-
-## 使用步骤
-
-1. 安装依赖
+- Hardhat 开发框架（推荐）
   
-  ```bash
-  pip install -r requirements.txt
-  配置 config.py：
-  ```
+- Avalanche 本地网络已启动（`localhost:9650`）
+  
+- 钱包（建议使用 MetaMask）
   
 
-Telegram Token
+---
 
-Web3 节点地址
+## 🧱 第一步：部署本地 Avalanche C-Chain 网络（已完成可跳过）
 
-合约地址
-
-启动 Bot
-
-**python bot.py**
+你应该已经运行了 AvalancheGo 节点，并开启了 C-Chain RPC：
 
 bash
-复制
-编辑
-python bot.py
 
-用户使用指令：
+复制编辑
 
-/bind 0xYourAddress
+`http://127.0.0.1:9650/ext/bc/C/rpc`
 
-/status
+---
+
+## 🧱 第二步：初始化项目 + 安装依赖
+
+bash
+
+复制编辑
+
+`mkdir avax-nft-local && cd avax-nft-local npm init -y npm install --save-dev hardhat npx hardhat`
+
+选择 `Create a basic sample project`，然后安装依赖：
+
+bash
+
+复制编辑
+
+`npm install @nomiclabs/hardhat-ethers ethers npm install @openzeppelin/contracts`
+
+---
+
+## 🧾 第三步：编写 ERC-721 合约
+
+在 `contracts/MyNFT.sol``contracts/MyNFT.sol` 中创建合约文件：
+
+---
+
+## ⚙️ 第四步：配置 Hardhat 网络
+
+修改 `hardhat.config.js`：
+
+> 💡 私钥可以是 Avalanche 本地网络中创建的钱包账号（例如通过 Avalanche Wallet 创建的测试账户）。
+
+---
+
+## 🚀 第五步：部署合约
+
+创建 `scripts/deploy.js`：
+
+运行部署命令：
+
+bash
+
+复制编辑
+
+`npx hardhat run scripts/deploy.js --network localavax`
+
+---
+
+## 🎁 第六步：为用户发送 NFT
+
+创建 `scripts/mint.js`：
+
+执行 mint 脚本：
+
+bash
+
+复制编辑
+
+`npx hardhat run scripts/mint.js --network localavax`
+
+---
+
+## 👤 第七步：用户接收 NFT（展示）
+
+用户可以使用 MetaMask 添加本地网络：
+
+- **网络名称**：Local AVAX
+  
+- **RPC URL**：`http://127.0.0.1:9650/ext/bc/C/rpc`
+  
+- **链ID**：XXXXX
+  
+- **币种符号**：TEST
+  
+
+然后通过 MetaMask 查看钱包中是否收到 NFT。
+
+
+
+
+
