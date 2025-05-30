@@ -1,0 +1,5 @@
+{
+  "name": "My NFT #1",
+  "description": "Test NFT on local Avalanche",
+  "image": "http://localhost:8080/images/1.png"
+}
